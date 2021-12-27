@@ -49,27 +49,19 @@ module NormalShock
     """
         
     function M2(M1,gamma)
-
         return (  (M1^2*(gamma-1) + 2)  /  (2*gamma*M1^2 - (gamma-1)) )^0.5
-
     end
 
     function P2(M1,gamma)
-
         return (2*gamma*M1^2 - (gamma -1)) / (gamma+1)
-
     end
 
     function T2(M1,gamma)
-
         return (2*gamma*M1^2 - (gamma-1))*((gamma-1)*M1^2+2) / ((gamma+1)^2*M1^2)
-
     end
 
     function Rho2(M1,gamma)
-
         return ((gamma+1)*M1^2)/((gamma-1)*M1^2+2)
-
     end 
 
 end
@@ -85,16 +77,20 @@ function NormalRatios(MachNumber,gamma)
 
 end
 
-function ApplyNormalShock(flow)
+function ApplyNormalShock(input_flow)
 
-    NormalShockRatio = NormalRatios(flow.MachNumber,flow.FluidObj.Ratio_of_Specific_Heats)
-    m2   = NormalShockRatio.Mach_Ratio         *flow.MachNumber
-    t2   = NormalShockRatio.Temperature_Ratio  *flow.Temperature
-    p2   = NormalShockRatio.Pressure_Ratio     *flow.Pressure
-    rho2 = NormalShockRatio.Density_Ratio      *flow.Density
+    """
+    ApplyNormalShock computes a ShockRatio object for a given input_flow 
+    """
 
-    ds_fluid = BaseFluid.Fluid(flow.FluidObj.Name,flow.FluidObj.Ratio_of_Specific_Heats,flow.FluidObj.Gas_Constant)
-    downstream_flow = BaseFluid.Flow(ds_fluid,m2,t2,p2,rho2)
+    NormalShockRatio = NormalRatios(input_flow.MachNumber,input_flow.FluidObj.Ratio_of_Specific_Heats)
+    m2   = NormalShockRatio.Mach_Ratio         *input_flow.MachNumber
+    t2   = NormalShockRatio.Temperature_Ratio  *input_flow.Temperature
+    p2   = NormalShockRatio.Pressure_Ratio     *input_flow.Pressure
+    rho2 = NormalShockRatio.Density_Ratio      *input_flow.Density
+
+    # ds_fluid = input_flow.FluidObj#BaseFluid.Fluid(flow.FluidObj.Name,flow.FluidObj.Ratio_of_Specific_Heats,flow.FluidObj.Gas_Constant) 
+    downstream_flow = BaseFluid.Flow(input_flow.FluidObj,m2,t2,p2,rho2)
 
     return downstream_flow
 
@@ -120,13 +116,10 @@ module ObliqueShock
     """
 
     function ConeAngle(M1,beta,gamma)
-
         # Gives cone angle for input Mach number and shock angle
         tan_theta = 2*cot(beta)*(M1^2*sin(beta)^2-1)/(M1^2*(gamma + cos(2*beta))+2)
-
         return atan(tan_theta)
-
-    end
+        end
 
 
     function ShockAngle(M1,theta,gamma)
@@ -143,11 +136,8 @@ module ObliqueShock
 
 
     function Minimum_ShockAngle(M1,gamma)
-
-        # The minimum shock angle is limited by Mach number: fow low Mach numbers, even zero cone angle will produce a non-zero beta
-                
+        # The minimum shock angle is limited by Mach number: fow low Mach numbers, even zero cone angle will produce a non-zero beta               
         return ShockAngle(M1,0,gamma)
-
     end
 
 
@@ -162,29 +152,35 @@ module ObliqueShock
 
         return 1/(sin(beta - theta))*(numer/denom)^0.5
 
-
     end
 
 
     function P2(M1,beta,gamma)
-
         return 1 + 2*gamma/(gamma+1) *(M1^2*sin(beta)^2 - 1)
-
     end
 
     function T2(M1,beta,gamma)
-
         return (2*gamma*M1^2*sin(beta)^2 - (gamma-1)) * ((gamma-1)*M1^2*sin(beta)^2 +2) / ((gamma+1)^2*M1^2*sin(beta)^2)
-
     end
 
     function Rho2(M1,beta,gamma)
-
         return ((gamma+1)*M1^2*sin(beta)^2)  / ((gamma-1)*M1^2*sin(beta)^2 + 2 )
-
     end 
 
 
+    function deflection_angle(M_free,theta_shock,gamma)
+        tandfa = 2/tan(theta_shock)*(M_free^2*sin(theta_shock)^2-1)/(M_free^2*(gamma+cos(2*theta_shock))+2)
+        return atan(tandfa)
+    end
+
+
+
+end
+
+
+
+function non_dimensionalised_velocity(M2,gamma)
+    return (2/((gamma-1)*M2^2)+1)^(-0.5)
 end
 
     ##########################
@@ -221,8 +217,8 @@ function ApplyObliqueShock(flow;angles...)
     rho2 = ObliqueShockRatio.Density_Ratio      *flow.Density
     
     # Construct new flow - why do we need to make a new fluid?
-    ds_fluid = BaseFluid.Fluid(flow.FluidObj.Name,flow.FluidObj.Ratio_of_Specific_Heats,flow.FluidObj.Gas_Constant)
-    downstream_flow = BaseFluid.Flow(ds_fluid,m2,t2,p2,rho2)
+    ds_fluid = BaseFluid.MakeFluid(flow.FluidObj.Name,flow.FluidObj.Ratio_of_Specific_Heats,flow.FluidObj.Gas_Constant)
+    downstream_flow = BaseFluid.MakeFlow(ds_fluid;MachNumber=m2,Temperature=t2,Pressure=p2)
 
     return downstream_flow
 
