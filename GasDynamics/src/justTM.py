@@ -47,14 +47,18 @@ def just_TM(beta_angle,y0):
     # Define the ODE solution
     sol = odeint(taylor_maccoll, y0, thetas)
 
+
     # Define the flowfield
     flow_field = np.concatenate((thetas_array,sol),axis=1)
+
+    idx = (np.abs(flow_field[:,2] - 0.0)).argmin()
+    physical_flow_field = flow_field[:idx,:]
 
     # Compute the 
     freduced = UnivariateSpline(flow_field[:,0], flow_field[:,2], s=0)
     cone_angle = -freduced.roots()[0]
     
-    return flow_field, cone_angle
+    return physical_flow_field, cone_angle
 
 
 
