@@ -12,6 +12,8 @@ using .Shocks
 include("./PMExpansion.jl")
 using .PMExpansion
 
+include("./ConicalFlow.jl")
+using .ConicalFlow
 
 
 end
