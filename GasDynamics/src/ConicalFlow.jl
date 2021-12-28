@@ -16,7 +16,7 @@ module ConicalFlow
     using .Shocks
 
     using PyCall
-    pushfirst!(pyimport("sys")."path","")
+    pushfirst!(pyimport("sys")."path","/home/ethan/Documents/Projects/AeroJulia/GasDynamics/src")
     TMpython = pyimport("justTM")
 
 
@@ -48,15 +48,15 @@ module ConicalFlow
 end
 
 
-# f1 = BaseFluid.Fluid("air",1.4,287)
+f1 = BaseFluid.Fluid("air",1.4,287)
 
-# V1 = 5.0
-# theta_shock_deg = 35.7
+V1 = 5.0
+theta_shock_deg = 35.7
 
-# flow = BaseFluid.MakeFlow(f1;MachNumber=V1,Density=1.125,Pressure=1e5)
+flow = BaseFluid.MakeFlow(f1;MachNumber=V1,Density=1.125,Pressure=1e5)
 
 
-# a,b = ConicalFlow.generate_conical_flow_from_shock_angle(flow,deg2rad(theta_shock_deg))
+a,b = ConicalFlow.generate_conical_flow_from_shock_angle(flow,deg2rad(theta_shock_deg))
 
 
 
