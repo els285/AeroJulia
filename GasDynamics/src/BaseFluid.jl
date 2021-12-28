@@ -1,13 +1,17 @@
 
 module BaseFluid
 
-    export Fluid,Flow,SonicVel,Mach2Vel,MakeFlow
+    export Fluid,Flow,SonicVel,Mach2Vel,MakeFlow,MakeFluid
 
     mutable struct Fluid
         # The fluid class defines an arbitrary calorically perfect fluid with thermodynamic material properties
         Name::String
         Ratio_of_Specific_Heats::Float64
         Gas_Constant::Float64
+    end
+
+    function MakeFluid(Name,Ratio_of_Specific_Heats,Gas_Constant)
+        return Fluid(Name,Ratio_of_Specific_Heats,Gas_Constant)
     end
 
     mutable struct Flow
@@ -83,6 +87,10 @@ module BaseFluid
         Flow(fluid,MachNumber,Velocity,T,p,rho)
 
     end
+
+    # Common fluids
+
+    Air = MakeFluid("Standard dry air @ 293K",1.4,287) # Standard dry air 293K, useful for most problems
 
 end
 
