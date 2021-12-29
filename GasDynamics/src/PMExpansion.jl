@@ -67,7 +67,7 @@ function ApplyExpansionFan(flow,TurnAngle)
     rho2 = ExpFan_Ratios.Density_Ratio      *flow.Density
 
     ds_fluid = BaseFluid.Fluid(flow.FluidObj.Name,flow.FluidObj.Ratio_of_Specific_Heats,flow.FluidObj.Gas_Constant)
-    downstream_flow = BaseFluid.Flow(ds_fluid,m2,t2,p2,rho2)
+    downstream_flow = BaseFluid.MakeFlow(ds_fluid;MachNumber=m2,Temperature=t2,Pressure=p2,Density=rho2)
 
 end
 
