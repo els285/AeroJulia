@@ -22,10 +22,9 @@ The package Roots is used to solve the Prandtl-Meyer function for Mach Number
 
 function PrandtlMeyer(M,gamma)
 
-    A = ((gamma-1)/(gamma+1))^0.5
-    B = (M^2-1)^0.5
-
-    return 1/A*atan(A*B) - atan(B)
+    a = sqrt((gamma + 1) / (gamma - 1)) * atan(sqrt((gamma - 1) / (gamma + 1) * (M^2 - 1)))
+    b = a - atan(sqrt(M^2 - 1))
+    return b
 
 end 
 
@@ -66,10 +65,16 @@ function ApplyExpansionFan(flow,TurnAngle)
     p2   = ExpFan_Ratios.Pressure_Ratio     *flow.Pressure
     rho2 = ExpFan_Ratios.Density_Ratio      *flow.Density
 
-    ds_fluid = BaseFluid.Fluid(flow.FluidObj.Name,flow.FluidObj.Ratio_of_Specific_Heats,flow.FluidObj.Gas_Constant)
+    ds_fluid = BaseFluid.MakeFluid(flow.FluidObj.Name,flow.FluidObj.Ratio_of_Specific_Heats,flow.FluidObj.Gas_Constant)
     downstream_flow = BaseFluid.MakeFlow(ds_fluid;MachNumber=m2,Temperature=t2,Pressure=p2,Density=rho2)
 
 end
 
 
 end
+
+
+
+
+
+# println(rad2deg(PMExpansion.PrandtlMeyer(50,1.4)))
