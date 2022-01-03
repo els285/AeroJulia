@@ -1,7 +1,7 @@
 
 module BaseFluid
 
-    export Fluid,Flow,SonicVel,Mach2Vel,MakeFlow,MakeFluid
+    export Fluid,Flow,SonicVel,Mach2Vel,MakeFlow,MakeFluid,Air
 
     mutable struct Fluid
         # The fluid class defines an arbitrary calorically perfect fluid with thermodynamic material properties
